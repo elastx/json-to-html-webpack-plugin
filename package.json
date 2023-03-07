@@ -1,0 +1,13 @@
+{
+  "name": "json-to-hmtl-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Generate html files reading data from json files",
+  "main": "index.js",
+  "repository": "https://github.com/elastx/json-to-html-webpack-plugin",
+  "author": "Mikael Grön <mikael.gron@elastx.se>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "ejs": "^3.1.8"
+  }
+}
