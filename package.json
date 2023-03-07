@@ -1,5 +1,5 @@
 {
-  "name": "json-to-hmtl-webpack-plugin",
+  "name": "json-to-html-webpack-plugin",
   "version": "1.0.0",
   "description": "Generate html files reading data from json files",
   "main": "index.js",
