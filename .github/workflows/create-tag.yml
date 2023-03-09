@@ -1,0 +1,25 @@
+name: Create Git tag on release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get version number
+        id: get_version
+        run: echo "::set-output name=version::$(jq -r .version package.json)"
+
+      - name: Create Git tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -af "v${{ steps.get_version.outputs.version }}" -m "Tag created by GitHub Actions" --force
+          git push --force origin "v${{ steps.get_version.outputs.version }}"
