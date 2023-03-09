@@ -63,7 +63,7 @@ class JSONToHTMLWebpackPlugin {
 
             // Render each page
             pagesWithChangedDependencies.forEach((page) => {
-              const { jsonFiles, transformer, template, target } = page;
+              const { jsonFiles, transformer, template, outputFile } = page;
 
               const rawData = {};
               jsonFiles.forEach((jsonFile) => {
@@ -79,15 +79,12 @@ class JSONToHTMLWebpackPlugin {
                 data = transformer(rawData);
               }
 
-              const htmlFilePath = `${target}index.html`;
-              const jsonFilePath = `${target}data.json`;
-
               ejs.renderFile(template, data, (err, html) => {
                 if (err) {
                   throw err;
                 }
 
-                compilation.emitAsset(htmlFilePath, new RawSource(html));
+                compilation.emitAsset(outputFile, new RawSource(html));
               });
             });
           }
