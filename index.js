@@ -1,6 +1,10 @@
 const fs = require("fs");
 const path = require("path");
-const ejs = require("ejs");
+const handlebars = require("handlebars");
+
+handlebars.registerHelper("json", function (context) {
+  return JSON.stringify(context);
+});
 
 class JSONToHTMLWebpackPlugin {
   constructor(options) {
@@ -65,25 +69,26 @@ class JSONToHTMLWebpackPlugin {
             pagesWithChangedDependencies.forEach((page) => {
               const { jsonFiles, transformer, template, outputFile } = page;
 
-              const rawData = {};
-              jsonFiles.forEach((jsonFile) => {
-                const jsonFilePath = path.resolve(jsonFile);
-                const jsonData = JSON.parse(
-                  fs.readFileSync(jsonFilePath, "utf8")
-                );
-                rawData[path.basename(jsonFilePath, ".json")] = jsonData;
-              });
-
-              let data = rawData;
-              if (transformer) {
-                data = transformer(rawData);
-              }
-
-              ejs.renderFile(template, data, (err, html) => {
+              fs.readFile(path.resolve(template), "utf8", (err, template) => {
                 if (err) {
                   throw err;
                 }
 
+                const rawData = {};
+                jsonFiles.forEach((jsonFile) => {
+                  const jsonFilePath = path.resolve(jsonFile);
+                  const jsonData = JSON.parse(
+                    fs.readFileSync(jsonFilePath, "utf8")
+                  );
+                  rawData[path.basename(jsonFilePath, ".json")] = jsonData;
+                });
+
+                let data = rawData;
+                if (transformer) {
+                  data = transformer(rawData);
+                }
+                const tpl = handlebars.compile(template);
+                const html = tpl(data);
                 compilation.emitAsset(outputFile, new RawSource(html));
               });
             });
