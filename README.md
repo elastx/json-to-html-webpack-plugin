@@ -1,54 +1,61 @@
-# JSON to HTML Webpack Plugin
+# JSONToHTMLWebpackPlugin
+
+A webpack plugin to convert JSON data to HTML pages. This plugin reads JSON files, transforms the data (if a transformer is provided), and then renders the data using an EJS template to generate an HTML file.
+
+## Installation
+
+```bash
+npm install json-to-html-webpack-plugin
+```
 
 ## Usage
 
-```js
-const JSONToHTMLPlugin = require("json-to-html-webpack-plugin");
+Add the plugin to your webpack configuration file:
+
+```javascript
+const JSONToHTMLWebpackPlugin = require("json-to-html-webpack-plugin");
 
 module.exports = {
+  // ...
   plugins: [
-    new JSONToHTMLPlugin({
-      template: "./src/template.html",
-      target: "path/to/put/files/in/dist",
-      jsonFiles: ["path/to/one.json", "path/to/another.json"],
-      transformer: (allJsonData) => ({
-        ...allJsonData.one,
-        whatEverYouWant: allJsonData.another.specificData,
-        otherData: allJsonData.another,
-      }),
+    new JSONToHTMLWebpackPlugin({
+      pages: [
+        {
+          jsonFiles: ["./data/data1.json"],
+          template: "./template.ejs",
+          outputFile: "index.html",
+        },
+        {
+          jsonFiles: ["./data/data2.json", "./data/data3.json"],
+          transformer: (data) => {
+            // Transform data
+            return transformedData;
+          },
+          template: "./template2.ejs",
+          outputFile: "about.html",
+        },
+      ],
     }),
   ],
 };
 ```
 
-## Options
+In the example above, the plugin is configured to generate two HTML pages. The first page is generated from the data1.json file and the template.ejs file. The second page is generated from the data2.json and data3.json files and the template2.ejs file.
 
-### `template`
+The plugin supports the following options:
 
-Type: `string`
+- `pages` (required): An array of objects, each representing a page to be generated. Each object must contain the following properties:
 
-Path to the template file.
+  - `jsonFiles` _(required)_: An array of strings, each representing a path to a JSON file.
+  - `template` _(required)_: A string representing a path to an EJS template file.
+  - `outputFile` _(required)_: A string representing the name of the output HTML file.
+  - `transformer` _(optional)_: A function that takes the raw JSON data and returns transformed data.
 
-### `target`
+## Strengths
 
-Type: `string`
+- The plugin only re-emits files which dependencies have changed. This means that if you change a JSON file, only the HTML file that depends on that JSON file will be re-emitted.
 
-Path to put the generated files in.
+## Limitations
 
-### `jsonFiles`
-
-Type: `string[]`
-
-Paths to the JSON files to use.
-
-Each file will be parsed as JSON and the data will be available in the transformer under the same name as the file.
-
-### `transformer`
-
-Type: `function`
-
-Function to transform the JSON data into the data to be used in the template.
-
-## License
-
-MIT (http://www.opensource.org/licenses/mit-license.php)
+- The plugin does not support multiple JSON files that are not dependent on each other. For example, if you have two JSON files, `data1.json` and `data2.json`, and you want to generate two HTML files, `index.html` and `about.html`, from these two JSON files, you will need to configure two pages in the plugin. The plugin does not support a single page that generates two HTML files from two JSON files.
+- The plugin only supports EJS templates. It does not support other template engines at this time.
