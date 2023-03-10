@@ -1,6 +1,6 @@
 {
   "name": "json-to-html-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate html files reading data from json files",
   "main": "index.js",
   "repository": "https://github.com/elastx/json-to-html-webpack-plugin",

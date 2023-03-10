@@ -32,12 +32,12 @@ class JSONToHTMLWebpackPlugin {
           });
         });
 
-        compilation.hooks.processAssets.tap(
+        compilation.hooks.processAssets.tapAsync(
           {
             name: "JSONToHTMLWebpackPlugin",
-            stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_INLINE,
           },
-          () => {
+          (compilationAssets, callback) => {
             const dependencies = this.options.pages
               .reduce(
                 (acc, page) => [...acc, ...page.jsonFiles, page.template],
@@ -92,6 +92,7 @@ class JSONToHTMLWebpackPlugin {
                 compilation.emitAsset(outputFile, new RawSource(html));
               });
             });
+            callback();
           }
         );
       }
